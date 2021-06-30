@@ -32,6 +32,7 @@ For a web site with even moderate traffic, the S3 bucket that contains the log f
 A large number of logfiles will have to be processed. Reading the log files in a single thread, as outlined above, is so slow that the application is not useful.
 
 AWS S3 is a massively parallel web resource. Each thread of processing for S3 is an HTTP transaction. S3 can support an almost unlimited number of HTTP threads. 
-By building a multi-threaded application logfiles can be read in parallel, dramatically improving application performance. The cost of this performance is a significantly more complex application. The logical structure of the application is shown below.
+By building a multi-threaded application logfiles can be read in parallel, dramatically improving application performance. The cost of this performance is a significantly more complex application. The logical structure of the S3 log file to ORC application is shown below.
 
 ![alt Diagram for threaded S3 log files to ORC](https://github.com/IanLKaplan/s3logreader/blob/master/img/s3_logs_to_orc_diagram.png?raw=true)
+
