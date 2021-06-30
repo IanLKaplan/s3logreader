@@ -2,6 +2,8 @@
 
 An application that reads S3 web log files, stored on S3, and processes the logs into ORC files.
 
+This application makes use of the [javaorc](https://github.com/IanLKaplan/javaorc) library in converting S3 web logfile data into ORC files.
+
 ## S3 Web Server Logfile Analysis
 
 Web sites hosted on Amazon Web Services S3 are low cost and support very high bandwidth (Athough there are [probably limits](https://www.theguardian.com/lifeandstyle/2014/dec/17/kim-kardashian-butt-break-the-internet-paper-magazine)). 
