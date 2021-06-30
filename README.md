@@ -23,6 +23,6 @@ Amazon has published an example showing how Athena can be used to query log file
 
 The performance of Athena queries against log file data can be dramatically improved by processing the S3 web server logs into ORC files. In testing against some of my web site log data the ORC compressed format reduced the data size by approximately 50 times. Athena queries against ORC data will be faster since less data must be scanned. Unless your S3 web sites have a very high traffic volumn, and a large amount of log data, the cost of Athena queries against log data converted to ORC files will be very small.
 
-
+## Reading Logfile Data from S3
 
 ![alt Diagram for S3 log files to ORC](https://github.com/IanLKaplan/s3logreader/blob/master/img/s3_logs_to_orc_diagram.png?raw=true)
