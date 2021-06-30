@@ -1,4 +1,5 @@
 # s3logreader
+### by Ian Kaplan, www.topstonesoftware.com, iank@bearcave.com 
 
 An application that reads S3 web log files, stored on S3, and processes the logs into ORC files.
 
