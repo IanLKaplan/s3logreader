@@ -53,5 +53,5 @@ export AWS_SECRET_ACCESS_KEY
 export AWS_REGION
 ```
 
-This code relies on the [javaorc](https://github.com/IanLKaplan/javaorc) library.  The S3 FileSystem that is built by the ```buildFileSystem()``` function in the ```BatchToOrc``` class relies on the AWS_ACCESS_KEY and AWS_SECRET_KEY to authenticate for S3 access. 
+This code relies on the [javaorc](https://github.com/IanLKaplan/javaorc) library.  The S3 FileSystem that is built by the ```buildFileSystem()``` function in the ```BatchToOrc``` class relies on the AWS_ACCESS_KEY and AWS_SECRET_KEY environment variables to authenticate for S3 access. 
 
