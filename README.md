@@ -39,3 +39,19 @@ By building a multi-threaded application logfiles can be read in parallel, drama
 
 ![alt Diagram for threaded S3 log files to ORC](https://github.com/IanLKaplan/s3logreader/blob/master/img/s3_logs_to_orc_diagram.png?raw=true)
 
+## Permissions
+
+The code in this repository relies on an AWS key, secret key and region being present as environment variables.  Your .bashrc file (or equivalent) should have the following environment variables:
+
+```
+AWS_ACCESS_KEY_ID="my key for S3 read/write access"
+AWS_SECRET_ACCESS_KEY="my secret key for S3 read/write access"
+AWS_REGION="the region - for example us-west-1"
+
+export AWS_ACCESS_KEY_ID
+export AWS_SECRET_ACCESS_KEY
+export AWS_REGION
+```
+
+This code relies on the (javaorc)[https://github.com/IanLKaplan/javaorc] library.  The S3 FileSystem that is built by the ```buildFileSystem()``` function in the ```BatchToOrc``` class relies on the AWS_ACCESS_KEY and AWS_SECRET_KEY to authenticate for S3 access. 
+
