@@ -43,7 +43,7 @@ By building a multi-threaded application logfiles can be read in parallel, drama
 
 As shown in the diagram above, the S3 log reader uses multiple Java threads to read log files.  After fetching the log file data, it is parsed and written into the ORC file.  If the bandwidth from S3 is high enough, the processing stage will become the bottleneck.
 
-The read (HTTP GET) rate from S3 is limited currently (July 2021) to 3,500 GET operations per bucket prefex per second (see [Best practices design patterns: optimizing Amazon S3 performance](https://docs.aws.amazon.com/AmazonS3/latest/userguide/optimizing-performance.html). The log reader will probably never read data at this rate, but this limit may be an issue with data lake applications that store data in S3.
+The read (HTTP GET) rate from S3 is limited currently (July 2021) to 3,500 GET operations per bucket prefex per second (see [Best practices design patterns: optimizing Amazon S3 performance](https://docs.aws.amazon.com/AmazonS3/latest/userguide/optimizing-performance.html)). The log reader will probably never read data at this rate, but this limit may be an issue with data lake applications that store data in S3.
 
 ## Permissions
 
