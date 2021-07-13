@@ -7,7 +7,7 @@ This application makes use of the [javaorc](https://github.com/IanLKaplan/javaor
 
 ## S3 Web Server Logfile Analysis
 
-Web sites hosted on Amazon Web Services S3 are low cost and support very high bandwidth (Athough there are [probably limits](https://www.theguardian.com/lifeandstyle/2014/dec/17/kim-kardashian-butt-break-the-internet-paper-magazine)). 
+Web sites hosted on Amazon Web Services S3 are low cost and support very high bandwidth (athough there are [probably limits](https://www.theguardian.com/lifeandstyle/2014/dec/17/kim-kardashian-butt-break-the-internet-paper-magazine)). 
 
 AWS allows logging to be turned on for a web site. The web log files are stored in a separate bucket. For example, the web logs for 
 [topstonesoftware.com](www.topstonesoftware.com) are stored in a bucket that I named topstonesoftware.logs. Logs that are older than
@@ -38,6 +38,12 @@ AWS S3 is a massively parallel web resource. Each thread of processing for S3 is
 By building a multi-threaded application logfiles can be read in parallel, dramatically improving application performance. The cost of this performance is a significantly more complex application. The logical structure of the S3 log file to ORC application is shown below.
 
 ![alt Diagram for threaded S3 log files to ORC](https://github.com/IanLKaplan/s3logreader/blob/master/img/s3_logs_to_orc_diagram.png?raw=true)
+
+## Limits on HTTP GET Operations on S3 buckets
+
+As shown in the diagram above, the S3 log reader uses multiple Java threads to read log files.  After fetching the log file data, it is parsed and written into the ORC file.  If the bandwidth from S3 is high enough, the processing stage will become the bottleneck.
+
+The read (HTTP GET) rate from S3 is limited currently (July 2021) to 3,500 GET operations per bucket prefex per second (see [Best practices design patterns: optimizing Amazon S3 performance](https://docs.aws.amazon.com/AmazonS3/latest/userguide/optimizing-performance.html). The log reader will probably never read data at this rate, but this limit may be an issue with data lake applications that store data in S3.
 
 ## Permissions
 
