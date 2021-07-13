@@ -20,7 +20,7 @@ per month, which is more than I pay for all of my web sites.
 AWS Athena is an interactive query service where you pay on a per-query basis. Athena uses standard SQL for queries. Unlike a relational database, where queries
 can make use of table indices, an Athena query will scan all of the data for every query. The per query pricing is currently $6.75 per terrabyte or 0.00675 per gigabyte of data processed.  Athena queries are rounded up to the nearest 10 megabytes, so the minimum query cost is $0.0000675.  The lost cost and on-demand nature of Athena makes it an attractive resource for data analysis.
 
-Amazon has published an example showing how Athena can be used to query log file data (see [How do I analyze my Amazon S3 server access logs using Athena?](https://aws.amazon.com/premiumsupport/knowledge-center/analyze-logs-athena/)). Athena queries against raw log data are slow, since Athena must process all of the log data for every query. 
+Amazon has published an example showing how Athena can be used to query log file data (see [How do I analyze my Amazon S3 server access logs using Athena?](https://aws.amazon.com/premiumsupport/knowledge-center/analyze-logs-athena/)). Athena queries against raw log data are slow, since there are lots of small files and Athena must process all of the raw log data for every query. 
 
 ## Athena Queries Against ORC formatted log data
 
