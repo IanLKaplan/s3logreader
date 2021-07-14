@@ -67,3 +67,15 @@ export AWS_REGION
 
 This code relies on the [javaorc](https://github.com/IanLKaplan/javaorc) library.  The S3 FileSystem that is built by the ```buildFileSystem()``` function in the ```BatchToOrc``` class relies on the AWS_ACCESS_KEY and AWS_SECRET_KEY environment variables to authenticate for S3 access. 
 
+## Hosting a web site on AWS S3
+
+In 2018 I wrote [Hosting a web site on AWS S3](https://medium.com/hackernoon/hosting-a-website-on-aws-s3-9aed18cec1ed), published on Medium.
+This article references Amazon's guide to setting up an S3 hosted web site: [Configuring a static website using a custom domain registered with Route 53](https://docs.aws.amazon.com/AmazonS3/latest/userguide/website-hosting-custom-domain-walkthrough.html)  
+
+As described in the Amazon guide, I set up logging for my web sites.  The S3 web access logs are written to an S3 log file bucket.  In the management section for the log file bucket, I set up a rule that deletes log files that are older than 3 months. The log file bucket is the S3 bucket that is read by this software.
+
+## ORC Log file Bucket
+
+I created an ORC logfile S3 bucket.  This is the target of the log file to ORC processing for all of my domain web logs.  Note that the log files have a bucket_name field that becomes an ORC column.
+
+
