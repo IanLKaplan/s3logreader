@@ -24,7 +24,7 @@ Amazon has published an example showing how Athena can be used to query log file
 
 ## Athena Queries Against ORC formatted log data
 
-The performance of Athena queries against log file data can be dramatically improved by processing the S3 web server logs into ORC files. In testing against some of my web site log data the ORC compressed format reduced the data size by approximately 50 times. Athena queries against ORC data will be faster since less data must be scanned. Unless your S3 web sites have a very high traffic volumn, and a large amount of log data, the cost of Athena queries against log data converted to ORC files will be very small.
+The performance of Athena queries against log file data can be dramatically improved by processing the S3 web server logs into ORC files. In testing against some of my web site log data the ORC compressed format reduced the data size by approximately 50 times. Athena queries against ORC data will be faster since less data must be scanned. Unless your S3 web sites have a very high traffic volumn, and a large amount of log data, the cost of Athena queries against log data converted to ORC files will be very free or very low. The AWS "Glue Catalog" (Athena) has a free tier of 1 million queries per month. In most use cases for web log analysis, this means that Athena use is free.
 
 ## Reading Logfile Data from S3
 
@@ -45,7 +45,13 @@ As shown in the diagram above, the S3 log reader uses multiple Java threads to r
 
 The read (HTTP GET) rate from S3 is limited currently (July 2021) to 3,500 GET operations per bucket prefex per second (see [Best practices design patterns: optimizing Amazon S3 performance](https://docs.aws.amazon.com/AmazonS3/latest/userguide/optimizing-performance.html)). The log reader will probably never read data at this rate, but this limit may be an issue with data lake applications that store data in S3.
 
-## Permissions
+## AWS User and Permissions
+
+When using AWS a core idea is to grant only the permissions that a particular piece of software needs. In most cases you should never run an application with your administrator permissions.
+
+The S3 log reader only requires permissions to read and write S3.  In Amazon's Identity and Access Management console (IAM) I created a user named "s3_web_access".  I added the Amazon existing ```AmazonS3FullAccess permissions``` to this user.  The keys mentioned below are the ID and secret key for this user. 
+
+## AWS Keys
 
 The code in this repository relies on an AWS key, secret key and region being present as environment variables.  Your .bashrc file (or equivalent) should have the following environment variables:
 
