@@ -49,7 +49,7 @@ The read (HTTP GET) rate from S3 is limited currently (July 2021) to 3,500 GET o
 
 When using AWS a core idea is to grant only the permissions that a particular piece of software needs. In most cases you should never run an application with your administrator permissions.
 
-The S3 log reader only requires permissions to read and write S3.  In Amazon's Identity and Access Management console (IAM) I created a user named "s3_web_access".  I added the Amazon existing ```AmazonS3FullAccess permissions``` to this user.  The keys mentioned below are the ID and secret key for this user. 
+The S3 log reader only requires permissions to read and write S3.  In Amazon's Identity and Access Management console (IAM) I created a user named "s3_web_access".  I added the Amazon existing ```AmazonS3FullAccess``` permissions to this user.  The keys mentioned below are the ID and secret key for this user. 
 
 ## AWS Keys
 
