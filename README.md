@@ -15,12 +15,12 @@ a defined time period can be removed so that S3 storage space is not consumed wi
 
 Unfortunately there is no inexpensive way to analyze the log data that is collected for your S3 web sites.  The log data can be exported to
 an Elastic Search Service instance, which can be used to do log analysis. The smallest micro Elastic Search Service instance currently costs approximately $13.14
-per month, which is more than I pay for all of my web sites. 
+per month (July 2021), which is more than I pay for all of my web sites. 
+
+AWS Athena can provide inexpensive log file analysis. Amazon has published an example showing how Athena can be used to query log file data (see [How do I analyze my Amazon S3 server access logs using Athena?](https://aws.amazon.com/premiumsupport/knowledge-center/analyze-logs-athena/)). Athena queries against raw log data are slow, since there are lots of small files and Athena must process all of the raw log data for every query.  Converting the S3 web log data into ORC files can speed up queries on the log data. The compressed nature of ORC files also means that queries will cost less.
 
 AWS Athena is an interactive query service where you pay on a per-query basis. Athena uses standard SQL for queries. Unlike a relational database, where queries
-can make use of table indices, an Athena query will scan all of the data for every query. The per query pricing is currently $6.75 per terrabyte or 0.00675 per gigabyte of data processed.  Athena queries are rounded up to the nearest 10 megabytes, so the minimum query cost is $0.0000675.  The lost cost and on-demand nature of Athena makes it an attractive resource for data analysis.
-
-Amazon has published an example showing how Athena can be used to query log file data (see [How do I analyze my Amazon S3 server access logs using Athena?](https://aws.amazon.com/premiumsupport/knowledge-center/analyze-logs-athena/)). Athena queries against raw log data are slow, since there are lots of small files and Athena must process all of the raw log data for every query. 
+can make use of table indices, an Athena query will scan all of the data for every query. The per query pricing is currently $6.75 per terrabyte or 0.00675 per gigabyte of data processed.  Athena queries are rounded up to the nearest 10 megabytes, so the minimum query cost is $0.0000675.  The low cost and on-demand nature of Athena makes it an attractive resource for data analysis.
 
 ## Athena Queries Against ORC formatted log data
 
