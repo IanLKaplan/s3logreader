@@ -5,10 +5,8 @@
 package com.topstonesoftware.s3logreader;
 
 import com.amazonaws.ClientConfiguration;
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -24,12 +22,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * <p>
- *     Read the AWS S3 web log files and build ORC files.
+ *     Read AWS S3 web log files and build ORC files.
  * </p>
  * <p>
- *     The ORC files can be processed by services like AWS Athena. By processing the log files into ORC files
- *     a compression ratio of about 50x is achieved, which dramatically reduces the time to needed to process
- *     the log data.
+ *     The Apache ORC columnar compressed file format can be used in data lake applications. The ORC file format
+ *     offers the advantage of high data compression relative to JSON files or log files. This application reads
+ *     AWS S3 web logs files and generates ORC files. These files cna then be read by data lake applications like
+ *     AWS Athena.
  * </p>
  * <p>
  *     To instantiate this class, use the Lombok generated builder. Each of these fields is required. If the field
@@ -38,12 +37,12 @@ import java.util.concurrent.LinkedBlockingQueue;
  * </p>
  * <pre>
  *     LogsToOrc logsToOrc = LogsToOrc.builder()
- *                 .logBucket(LOG_BUCKET)
- *                 .logPathPrefix(PREFIX)
- *                 .orcBucket(ORC_BUCKET)
- *                 .orcPathPrefix(ORC_PATH_PREFIX)
- *                 .orcFilePrefix(ORC_FILE_PREFIX)
- *                 .build();
+ *                             .logBucket(logBucket)
+ *                             .logPathPrefix(logPathPrefix)
+ *                             .orcBucket(orcBucket)
+ *                             .orcPathPrefix(orcPathPrefix)
+ *                             .logDomainName(domain)
+ *                             .build();
  * </pre>
  * <h4>
  *     Arguments
@@ -55,18 +54,8 @@ import java.util.concurrent.LinkedBlockingQueue;
  *     "mylogs/something"  The log path prefix may be the empty string (""). It cannot be null.
  *     </li>
  *     <li>orcBucket - the S3 bucket that that the ORC files will be written to.</li>
- *     <li>
- *     orcPathPrefix - the path prefix for the orc files.  The s3 file system writer adds the path prefix
- *     user/[username] - for example, user/iank  The orcPathPrefix is an optional prefix that follows this.
- *     For example, if the orcPathPrefix is 'http_logs" the full prefix might be user/iank/http_logs/  The orcPathPrefix
- *     may be the empty string. It cannot be null.
- *     </li>
- *     <li>
- *         orcFilePrefix - the prefix for the ORC file name.  This is particularly useful for a case where the
- *         web log data for multiple web sites is written to the orc directory.  This would allow an ORC log file
- *         for bearcave.com to be bearcave.2021-04-18.orc and another file to be topstonesoftware.2021-04-18.orc
- *         This argument is required and may not be the empty string.
- *     </li>
+ *     <li>orcPathPrefix - a prefix for the ORC file path. For example: http_logs</li>
+ *     <li>logDomainName - the domain that was accessed to generate the logs (e.g., example.com)</li>
  * </ul>
  * <h4>
  *     Keys and Region
@@ -85,9 +74,9 @@ import java.util.concurrent.LinkedBlockingQueue;
  * </p>
  * @author Ian L Kaplan, Topstone Software Consulting
  */
+
 @Slf4j
 @Builder
-@AllArgsConstructor
 public class LogsToOrc {
     private static final String S3_ID = "AWS_ACCESS_KEY_ID";
     private static final String S3_KEY = "AWS_SECRET_ACCESS_KEY";
@@ -98,26 +87,24 @@ public class LogsToOrc {
     private static final int MAX_CONNECTIONS = 64;
     private static final int NUM_THREADS = 32;
     private static final String TODAY_DATE_FORMAT = "yyyy-MM-dd";
-    private final SimpleDateFormat dateFormatter = new SimpleDateFormat(TODAY_DATE_FORMAT);
+    final SimpleDateFormat dateFormatter = new SimpleDateFormat(TODAY_DATE_FORMAT);
     @NonNull
     private final String logBucket;
+    @NonNull
+    private final String orcPathPrefix;
     @NonNull
     private final String logPathPrefix;
     @NonNull
     private final String orcBucket;
     @NonNull
-    private final String orcPathPrefix;
-    @NonNull
-    private final String orcFilePrefix;
-
-    /* Note: the @Builder annotation will cause lombok to generate a builder constructor for this class */
+    private final String logDomainName;
 
     private void launchProcessingThreads(AmazonS3 s3Client, List<String> keyList, String orcFileName) {
         S3LogReader[] readerThreads = new S3LogReader[NUM_THREADS];
         ExecutorService execPool = Executors.newFixedThreadPool( NUM_THREADS );
         S3KeyList syncKeyList = new S3KeyList(keyList);
         LinkedBlockingQueue<String> logLines = new LinkedBlockingQueue<>();
-        BatchToOrc batchToOrc = new BatchToOrc(orcBucket, orcPathPrefix, orcFileName, logLines);
+        BatchToOrc batchToOrc = new BatchToOrc(orcBucket, orcPathPrefix, logDomainName, orcFileName, logLines);
         Thread batchToOrcThread = new Thread( batchToOrc );
         Killer killer = new Killer(batchToOrcThread);
         for (int i = 0; i < NUM_THREADS; i++) {
@@ -166,7 +153,7 @@ public class LogsToOrc {
             String todayStr = getTodaysDate();
             while (!(batch = batcher.getLogfileBatch()).batch().isEmpty()) {
                 String batchDate = batch.batchDate();
-                String orcFileKey = orcFilePrefix + "." + batchDate + ORC_SUFFIX;
+                String orcFileKey = batchDate + ORC_SUFFIX;
                 List<String> keyList = batch.batch();
                 launchProcessingThreads(s3Client, keyList, orcFileKey);
                 if (batchDate.equals(todayStr)) {

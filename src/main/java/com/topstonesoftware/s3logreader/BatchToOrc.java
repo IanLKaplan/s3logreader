@@ -38,13 +38,15 @@ public class BatchToOrc implements Runnable {
     private final Configuration writerConfig = new Configuration();
     private final String orcBucket;
     private final String orcPathPrefix;
+    private final String domainName;
     private final String orcFilename;
     private final LinkedBlockingQueue<String> logLineQueue;
     private int linesProcessed = 0;
 
-    public BatchToOrc(String orcBucket, String orcPathPrefix, String orcFilename, LinkedBlockingQueue<String> logLineQueue) {
+    public BatchToOrc(String orcBucket, String orcPathPrefix, String domainName, String orcFilename, LinkedBlockingQueue<String> logLineQueue) {
         this.orcBucket = orcBucket;
         this.orcPathPrefix = orcPathPrefix;
+        this.domainName = domainName;
         this.orcFilename = orcFilename;
         this.logLineQueue = logLineQueue;
     }
@@ -85,7 +87,7 @@ public class BatchToOrc implements Runnable {
     @Override
     public void run() {
         try {
-            String orcFilePath = orcPathPrefix + "/" + orcFilename;
+            String orcFilePath = orcPathPrefix + "/" + domainName + "/" + orcFilename;
             FileSystem s3FileSystem = buildFileSystem();
             Writer fileWriter = buildWriter(s3FileSystem, orcFilePath);
             try (WriteORCFile orcFileWriter = new WriteORCFile("bogus", schema)) {
