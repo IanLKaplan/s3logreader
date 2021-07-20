@@ -62,7 +62,7 @@ public class LogReaderMain {
                 .longOpt( LOG_PATH_PREFIX_CL )
                 .hasArg()
                 .desc("An optional S3 path prefix for the log files")
-                .optionalArg(true)
+                .required(false)
                 .build();
         options.addOption(logPathPrefixOpt);
         Option logDomainNameOpt = Option.builder()
@@ -79,7 +79,6 @@ public class LogReaderMain {
                 .required( false )
                 .build();
         options.addOption(helpOpt);
-        options.addOption(logDomainNameOpt);
         return options;
     }
 
